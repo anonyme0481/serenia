@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sites Recommandés - APK Hub</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        canva: { 
+                            purple: '#8B3DFF',
+                            teal: '#00C4CC'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+        body { background-color: #F8F9FA; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .site-card { transition: all 0.2s ease; }
+        .site-card:hover { transform: translateY(-3px); }
+        #copyToast { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .hidden-site { display: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Notification de copie -->
+    <div id="copyToast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 opacity-0 pointer-events-none z-[100]">
+        <i class="fa-solid fa-check-circle text-green-400"></i>
+        <span class="font-bold text-sm">Lien copié !</span>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-100 p-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2 font-bold text-gray-600 hover:text-canva-purple transition-all">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span class="hidden sm:inline">Retour</span>
+            </a>
+            <h1 class="text-xl font-black uppercase">SITES<span class="text-canva-purple">HUB</span></h1>
+            <div class="flex items-center gap-2 text-canva-purple font-bold">
+                <span id="site-count">0</span> <i class="fa-solid fa-link"></i>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 py-8 w-full">
+        
+        <!-- Recherche et Filtres -->
+        <div class="mb-10 space-y-6">
+            <div class="relative group">
+                <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-canva-purple transition-colors"></i>
+                <input type="text" id="searchInput" placeholder="Rechercher un site (nom, catégorie...)" 
+                    class="w-full pl-14 pr-6 py-5 bg-white border-2 border-gray-100 rounded-[2rem] focus:border-canva-purple outline-none shadow-sm text-lg font-medium transition-all">
+            </div>
+
+            <div class="flex flex-wrap gap-2 justify-center">
+                <button onclick="filterSites('all')" class="category-btn active px-5 py-2 rounded-full bg-canva-purple text-white font-bold text-sm">Tous</button>
+                <button onclick="filterSites('Streaming')" class="category-btn px-5 py-2 rounded-full bg-white border border-gray-200 text-gray-600 font-bold text-sm hover:border-canva-purple">Streaming</button>
+                <button onclick="filterSites('Outils')" class="category-btn px-5 py-2 rounded-full bg-white border border-gray-200 text-gray-600 font-bold text-sm hover:border-canva-purple">Outils</button>
+                <button onclick="filterSites('Éducation')" class="category-btn px-5 py-2 rounded-full bg-white border border-gray-200 text-gray-600 font-bold text-sm hover:border-canva-purple">Éducation</button>
+                <button onclick="filterSites('Social')" class="category-btn px-5 py-2 rounded-full bg-white border border-gray-200 text-gray-600 font-bold text-sm hover:border-canva-purple">Social</button>
+            </div>
+        </div>
+
+        <!-- Grille de sites -->
+        <div id="sitesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Les sites seront générés par JavaScript pour en avoir des centaines facilement -->
+        </div>
+
+        <!-- Message si aucun résultat -->
+        <div id="noResults" class="hidden text-center py-20">
+            <i class="fa-solid fa-face-frown text-5xl text-gray-300 mb-4"></i>
+            <p class="text-gray-500 font-bold">Aucun site ne correspond à votre recherche.</p>
+        </div>
+    </main>
+
+    <script>
+        // Base de données des sites
+        const sitesData = [
+            { name: "Purstream.wiki", url: "https://purstream.wiki/", cat: "Streaming", icon: "fa-clapperboard", color: "text-indigo-600", bg: "bg-indigo-50" },
+            { name: "Zone Telechargement", url: "https://www.zone-telechargement.irish", cat: "Streaming", icon: "fa-cloud-arrow-down", color: "text-blue-600", bg: "bg-blue-50" },
+            { name: "ChatGPT", url: "https://chatgpt.com", cat: "Outils", icon: "fa-robot", color: "text-emerald-600", bg: "bg-emerald-50" },
+            { name: "Google", url: "https://google.com", cat: "Outils", icon: "fa-brands fa-google", color: "text-blue-500", bg: "bg-gray-50" },
+            { name: "Canva", url: "https://canva.com", cat: "Outils", icon: "fa-palette", color: "text-cyan-500", bg: "bg-cyan-50" },
+            { name: "Wikipedia", url: "https://wikipedia.org", cat: "Éducation", icon: "fa-book", color: "text-gray-800", bg: "bg-gray-100" },
+            { name: "YouTube", url: "https://youtube.com", cat: "Streaming", icon: "fa-brands fa-youtube", color: "text-red-600", bg: "bg-red-50" },
+            { name: "DeepL", url: "https://deepl.com", cat: "Outils", icon: "fa-language", color: "text-blue-900", bg: "bg-blue-50" },
+            { name: "GitHub", url: "https://github.com", cat: "Outils", icon: "fa-brands fa-github", color: "text-gray-900", bg: "bg-gray-200" },
+            { name: "Pinterest", url: "https://pinterest.com", cat: "Social", icon: "fa-brands fa-pinterest", color: "text-red-500", bg: "bg-red-50" },
+            { name: "Discord", url: "https://discord.com", cat: "Social", icon: "fa-brands fa-discord", color: "text-indigo-500", bg: "bg-indigo-50" },
+            { name: "Duolingo", url: "https://duolingo.com", cat: "Éducation", icon: "fa-feather", color: "text-green-500", bg: "bg-green-50" },
+            { name: "Remove.bg", url: "https://remove.bg", cat: "Outils", icon: "fa-image", color: "text-blue-400", bg: "bg-blue-50" },
+            { name: "IlovePDF", url: "https://ilovepdf.com", cat: "Outils", icon: "fa-file-pdf", color: "text-red-600", bg: "bg-red-50" },
+            { name: "Twitch", url: "https://twitch.tv", cat: "Streaming", icon: "fa-brands fa-twitch", color: "text-purple-600", bg: "bg-purple-50" },
+            { name: "Reddit", url: "https://reddit.com", cat: "Social", icon: "fa-brands fa-reddit", color: "text-orange-600", bg: "bg-orange-50" }
+            // On pourrait en ajouter des centaines ici...
+        ];
+
+        // Génération automatique pour l'exemple (simulation de 100+ sites)
+        for(let i=1; i<=100; i++) {
+            sitesData.push({
+                name: "Outil Utile " + i,
+                url: "https://exemple.com/outil" + i,
+                cat: i % 3 == 0 ? "Éducation" : "Outils",
+                icon: "fa-star",
+                color: "text-yellow-500",
+                bg: "bg-yellow-50"
+            });
+        }
+
+        const grid = document.getElementById('sitesGrid');
+        const countSpan = document.getElementById('site-count');
+
+        function renderSites(data) {
+            grid.innerHTML = '';
+            countSpan.textContent = data.length;
+            
+            data.forEach(site => {
+                const card = document.createElement('div');
+                card.className = "site-card bg-white p-5 rounded-[2rem] border border-gray-100 shadow-sm flex items-center justify-between gap-4";
+                card.innerHTML = `
+                    <div class="flex items-center gap-4 overflow-hidden">
+                        <div class="w-12 h-12 ${site.bg} rounded-2xl flex-shrink-0 flex items-center justify-center text-2xl ${site.color}">
+                            <i class="fa-solid ${site.icon}"></i>
+                        </div>
+                        <div class="truncate">
+                            <h3 class="font-black text-base truncate">${site.name}</h3>
+                            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">${site.cat}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="copyToClipboard('${site.url}')" class="w-10 h-10 flex items-center justify-center bg-gray-50 text-gray-500 rounded-xl hover:bg-gray-100 transition-all" title="Copier">
+                            <i class="fa-solid fa-copy"></i>
+                        </button>
+                        <a href="${site.url}" target="_blank" class="w-10 h-10 flex items-center justify-center bg-canva-purple text-white rounded-xl hover:shadow-lg hover:shadow-purple-200 transition-all" title="Visiter">
+                            <i class="fa-solid fa-external-link"></i>
+                        </a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            document.getElementById('noResults').classList.toggle('hidden', data.length > 0);
+        }
+
+        // Recherche
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            const filtered = sitesData.filter(s => 
+                s.name.toLowerCase().includes(val) || 
+                s.cat.toLowerCase().includes(val)
+            );
+            renderSites(filtered);
+        });
+
+        // Filtre catégories
+        function filterSites(cat) {
+            const btns = document.querySelectorAll('.category-btn');
+            btns.forEach(b => {
+                b.classList.remove('bg-canva-purple', 'text-white');
+                b.classList.add('bg-white', 'text-gray-600');
+            });
+            event.target.classList.add('bg-canva-purple', 'text-white');
+            
+            if(cat === 'all') {
+                renderSites(sitesData);
+            } else {
+                renderSites(sitesData.filter(s => s.cat === cat));
+            }
+        }
+
+        function copyToClipboard(text) {
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+
+            const toast = document.getElementById('copyToast');
+            toast.classList.replace('opacity-0', 'opacity-100');
+            toast.classList.remove('pointer-events-none');
+            
+            setTimeout(() => {
+                toast.classList.replace('opacity-100', 'opacity-0');
+                toast.classList.add('pointer-events-none');
+            }, 2000);
+        }
+
+        // Initialisation
+        renderSites(sitesData);
+    </script>
+</body>
+</html>
