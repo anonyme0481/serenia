@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mothman - L'Exposé Interactif</title>
+    
+    <link rel="icon" type="image/png" href="icon.png">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Configuration Tailwind (Couleurs originales conservées) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        canva: {
+                            teal: '#00C4CC',
+                            purple: '#8B3DFF',
+                            blue: '#5433FF',
+                            bg: '#F2F2F2',
+                            text: '#0E1318',
+                            gray: '#5F6368',
+                            red: '#FF4B4B' // Ajout d'un rouge pour les yeux du Mothman
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #F8F9FA;
+            color: #0E1318;
+            overflow-x: hidden;
+        }
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(139, 61, 255, 0.1);
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #00C4CC 0%, #7D2AE8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Blobs adaptés pour une ambiance un peu plus "mystère" tout en gardant le style */
+        .blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, rgba(84, 51, 255, 0.1) 0%, rgba(139,61,255,0.1) 100%);
+            filter: blur(80px);
+            border-radius: 50%;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen font-sans">
+
+    <!-- Blobs décoratifs de fond -->
+    <div class="blob" style="top: -10%; left: -5%;"></div>
+    <div class="blob" style="bottom: -10%; right: -5%;"></div>
+
+    <!-- Barre de Navigation -->
+    <nav class="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1920px] mx-auto px-6 h-16 flex justify-between items-center">
+            <!-- Gauche: Logo -->
+            <div class="flex items-center gap-8">
+                <a href="index.html" class="flex items-center gap-2 group">
+                    <div class="w-8 h-8 rounded bg-gradient-to-br from-gray-800 to-black flex items-center justify-center text-canva-red transition-transform group-hover:rotate-12">
+                        <!-- Icône changée pour des yeux rouges -->
+                        <i class="fa-solid fa-eye text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight text-gray-900">Mothman<span class="font-normal text-gray-500">Exposé</span></span>
+                </a>
+            </div>
+
+            <!-- Droite: Heure & Page suivante -->
+            <div class="flex items-center gap-6">
+                <div class="hidden sm:flex items-center gap-2 text-gray-500 font-medium bg-gray-50 px-4 py-2 rounded-full border border-gray-100">
+                    <i class="fa-solid fa-calendar-day text-canva-purple"></i>
+                    <span id="date-display">1966-1967</span>
+                </div>
+                
+                <a href="index2.html" class="bg-canva-purple text-white font-bold py-2.5 px-6 rounded-xl hover:bg-purple-700 transition-all hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2">
+                    COMMENCER
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- En-tête Hero -->
+    <header class="relative pt-20 pb-20 px-6 overflow-hidden">
+        <div class="max-w-4xl mx-auto text-center relative">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-100 shadow-sm mb-8 animate-bounce">
+                <span class="w-2 h-2 rounded-full bg-canva-red"></span>
+                <span class="text-sm font-bold text-gray-600">Dossier classifié : Virginie Occidentale</span>
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-bold mb-8 leading-tight text-gray-900">
+                La Légende de <br><span class="gradient-text">l'Homme-Papillon</span>
+            </h1>
+            
+            <p class="text-lg text-gray-500 max-w-2xl mx-auto mb-12 font-medium">
+                Bienvenue dans cet exposé interactif sur "La Prophétie des Ombres". 
+                Nous allons explorer les événements étranges de Point Pleasant, des premières apparitions jusqu'à la catastrophe du Silver Bridge.
+            </p>
+            
+            <!-- Boutons de navigation rapide (simulation de chapitres) -->
+            <div class="flex flex-wrap justify-center gap-3 text-sm font-bold text-gray-500">
+                <div class="px-6 py-3 bg-white rounded-2xl border-2 border-canva-purple text-canva-purple shadow-sm">Introduction</div>
+                <div class="px-6 py-3 bg-white rounded-2xl border border-gray-100 shadow-sm opacity-50">Les Témoignages</div>
+                <div class="px-6 py-3 bg-white rounded-2xl border border-gray-100 shadow-sm opacity-50">Indrid Cold</div>
+                <div class="px-6 py-3 bg-white rounded-2xl border border-gray-100 shadow-sm opacity-50">Le Pont</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Grille de Sommaire -->
+    <section class="py-8 px-6 max-w-[1200px] mx-auto">
+        <div class="flex justify-between items-end mb-10">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900">Sommaire de l'enquête</h2>
+                <div class="h-1.5 w-20 bg-gradient-to-r from-canva-teal to-canva-purple mt-2 rounded-full"></div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Card 1 -->
+            <a href="index2.html" class="block">
+                <div class="bg-white rounded-3xl overflow-hidden border border-gray-100 card-hover group cursor-pointer h-full">
+                    <div class="h-40 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center p-6 relative overflow-hidden">
+                        <i class="fa-solid fa-map-pin text-canva-teal text-6xl opacity-20 absolute -bottom-4 -right-4 transform rotate-12"></i>
+                        <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+                            <span class="text-2xl font-bold text-white">1</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-bold text-xl text-gray-900 mb-2">Le Contexte</h3>
+                        <p class="text-gray-500 text-sm">Point Pleasant, Virginie Occidentale. Une petite ville tranquille avant que tout ne bascule.</p>
+                        <div class="mt-4 text-canva-teal font-bold text-sm uppercase tracking-wide">Lire la suite</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Card 2 -->
+            <div class="bg-white rounded-3xl overflow-hidden border border-gray-100 card-hover group cursor-pointer h-full opacity-60">
+                <div class="h-40 bg-gradient-to-br from-canva-purple to-indigo-600 flex items-center justify-center p-6 relative overflow-hidden">
+                    <i class="fa-solid fa-crow text-white text-6xl opacity-20 absolute -bottom-4 -left-4"></i>
+                    <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <span class="text-2xl font-bold text-white">2</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-xl text-gray-900 mb-2">La Créature</h3>
+                    <p class="text-gray-500 text-sm">Yeux rouges, ailes immenses, cris stridents. Analyse des descriptions des témoins.</p>
+                    <div class="mt-4 text-gray-400 font-bold text-sm uppercase tracking-wide">À venir</div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-white rounded-3xl overflow-hidden border border-gray-100 card-hover group cursor-pointer h-full opacity-60">
+                <div class="h-40 bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center p-6 relative overflow-hidden">
+                    <i class="fa-solid fa-bridge text-white text-6xl opacity-20 absolute -bottom-4 -right-4"></i>
+                    <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <span class="text-2xl font-bold text-white">3</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-xl text-gray-900 mb-2">La Chute</h3>
+                    <p class="text-gray-500 text-sm">15 décembre 1967. L'effondrement du Silver Bridge et la fin de la prophétie.</p>
+                    <div class="mt-4 text-gray-400 font-bold text-sm uppercase tracking-wide">À venir</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Gros bouton Start -->
+        <div class="mt-12 text-center">
+             <a href="index2.html" class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-2xl hover:bg-gray-800 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 shadow-xl">
+                Lancer la présentation
+                <i class="fa-solid fa-play ml-3"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Pied de page -->
+    <footer class="bg-white border-t border-gray-100 pt-12 pb-8 px-6 mt-auto">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="flex items-center gap-2 group cursor-pointer">
+                <i class="fa-solid fa-eye text-2xl text-canva-purple group-hover:text-canva-red transition-colors"></i>
+                <span class="font-bold text-xl">Mothman Exposé</span>
+            </div>
+            <div class="text-gray-400 text-sm font-medium">
+                Page 1 sur 16 • Introduction
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
